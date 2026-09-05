@@ -1,7 +1,10 @@
 {
-  "startedAt": "2026-09-05T20:56:49.571Z",
-  "finishedAt": "2026-09-05T20:56:49.574Z",
+  "startedAt": "2026-09-05T21:37:10.224Z",
+  "finishedAt": "2026-09-05T21:37:10.231Z",
   "n": 20,
+  "transport": {
+    "kind": "local"
+  },
   "node": "v22.15.0",
   "platform": "win32",
   "rime": {

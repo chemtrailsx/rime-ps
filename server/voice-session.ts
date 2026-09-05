@@ -146,11 +146,17 @@ export class VoiceSession {
 
   // ---------------------------------------------------------------- turns ---
 
-  private async openTurn(userText: string, _clientAt: number) {
+  private async openTurn(userText: string, clientAt: number) {
     // A new utterance arriving while we are speaking IS a barge-in, even if the
     // client's VAD did not classify it as one first.
+    //
+    // Pass the CLIENT's timestamp through, not Date.now(). Stop latency is
+    // computed as (client clock at silence) - (client clock at barge-in), and
+    // the client's clock is performance.now() -- milliseconds since page load,
+    // not epoch. Feeding a server epoch timestamp into that subtraction yields
+    // a large negative number that clamps to a fake, flattering 0 ms.
     if (this.live && !this.live.closed) {
-      this.interrupt(this.live.id, Date.now(), 'asr_interim');
+      this.interrupt(this.live.id, clientAt, 'asr_interim');
     }
 
     const id = ++this.turnCounter;
@@ -353,7 +359,20 @@ export class VoiceSession {
     if (stopped && t.interruptedAt !== null) {
       // Both timestamps come from the client clock, so no clock-skew
       // correction is needed and none is being hidden.
-      t.trace.stopLatencyMs = Math.round(Math.max(0, clientAt - t.interruptedAt) * 10) / 10;
+      const raw = clientAt - t.interruptedAt;
+      // A negative or absurd delta means the two timestamps did not come from
+      // the same clock. Clamping that to 0 would print a flattering number for
+      // a measurement that did not happen, so report it as unknown instead.
+      t.trace.stopLatencyMs =
+        raw >= 0 && raw < 60_000 ? Math.round(raw * 10) / 10 : null;
+      if (t.trace.stopLatencyMs === null) {
+        this.sink({
+          type: 'log',
+          level: 'warn',
+          msg: `turn ${t.id}: stop latency not measurable (clock mismatch, delta ${Math.round(raw)}ms)`,
+          at: Date.now(),
+        });
+      }
     }
     this.closeTurn(t, !stopped, samplesPlayed);
   }

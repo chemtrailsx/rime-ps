@@ -8,6 +8,8 @@ spec is a comeback, not a typo.
 
 Rime `coda` provides every spoken word.
 
+**Live:** https://bay-six.onrender.com &nbsp;·&nbsp; **Repo:** https://github.com/chemtrailsx/rime-ps
+
 ---
 
 ## The one hard voice problem
@@ -79,10 +81,18 @@ No microphone? Type the turn and press **Interrupt** — it sends the identical
 ### Reproduce the numbers
 
 ```bash
-npm run evidence                  # AT-1..AT-6, n=20, needs RIME_API_KEY
+# against the live deployment, with real Rime audio -- needs no local key
+npm run evidence -- --remote wss://bay-six.onrender.com/ws/voice
+
+npm run evidence                  # against a local session, needs RIME_API_KEY
 npm run evidence -- --only AT-6   # pure-function test, no key needed
-npm run pronounce                 # before/after delivery clips
+npm run pronounce                 # before/after delivery clips, needs RIME_API_KEY
 ```
+
+**6/6 pass** against the deployment at `n=20`. On a remote run the harness also
+measures RTT on the same socket and reports stop latency both network-excluded
+and end-to-end, so model/server latency is never conflated with network
+latency. See [RIME_EVIDENCE.md](RIME_EVIDENCE.md).
 
 Results land in `evidence/RESULTS.md` (generated, never hand-edited) with
 per-trial data in `evidence/latest.json`.

@@ -1,3 +1,4 @@
+import WebSocket from 'ws';
 import { VoiceSession } from '../server/voice-session.js';
 import type { ClientMessage, ServerMessage, TurnTrace } from '../server/protocol.js';
 
@@ -14,11 +15,107 @@ import type { ClientMessage, ServerMessage, TurnTrace } from '../server/protocol
  * seconds per chunk -- so `samplesPlayed` at the moment of a barge-in is a
  * faithful analogue of what a real output device would have delivered.
  *
- * What this harness measures is the SERVER-SIDE stop path: barge-in received ->
- * `stop_audio` ordered -> playback halted. A real browser adds one render
- * quantum plus AudioContext.outputLatency on top. Both figures are reported
- * separately in RIME_EVIDENCE.md; neither is presented as the other.
+ * Two transports, same tests:
+ *
+ *   - LOCAL  (default) drives a VoiceSession in this process. Measures the
+ *     server-side stop path with no network in the loop: barge-in received ->
+ *     `stop_audio` ordered -> playback halted.
+ *   - REMOTE (`--remote wss://host/ws/voice`) drives a DEPLOYED instance over
+ *     the real socket. The measured stop latency then includes a full
+ *     client -> internet -> server -> internet -> client round trip, which is
+ *     much closer to what a technician on that deployment experiences.
+ *
+ * A real browser adds one render quantum plus AudioContext.outputLatency on top
+ * of either figure. All three are reported separately in RIME_EVIDENCE.md;
+ * none is presented as another.
  */
+
+/** Where client messages go and server messages come from. */
+interface Transport {
+  readonly kind: 'local' | 'remote';
+  start(onServer: (m: ServerMessage) => void): Promise<void>;
+  send(m: ClientMessage): void;
+  stop(): void;
+  /** Only the local transport can see the model history directly. */
+  history(): unknown[] | null;
+  /**
+   * Median network round trip to the server, or null when there is no network
+   * in the loop. Measured with WebSocket ping/pong on the SAME socket the test
+   * traffic uses, so it is the round trip that a barge-in actually pays -- not
+   * an ICMP ping to a different host over a different path.
+   */
+  rtt(samples: number): Promise<number | null>;
+}
+
+class LocalTransport implements Transport {
+  readonly kind = 'local';
+  session!: VoiceSession;
+  async start(onServer: (m: ServerMessage) => void) {
+    this.session = new VoiceSession(onServer);
+    await this.session.start();
+  }
+  send(m: ClientMessage) {
+    this.session.handle(m);
+  }
+  stop() {
+    this.session.dispose();
+  }
+  history() {
+    return this.session.traceHistory as unknown[];
+  }
+  async rtt() {
+    return null; // in-process: there is no network to subtract
+  }
+}
+
+class RemoteTransport implements Transport {
+  readonly kind = 'remote';
+  private ws!: WebSocket;
+  constructor(private url: string) {}
+  async start(onServer: (m: ServerMessage) => void) {
+    await new Promise<void>((resolve, reject) => {
+      const ws = new WebSocket(this.url);
+      this.ws = ws;
+      const timer = setTimeout(
+        () => reject(new Error(`timed out connecting to ${this.url}`)),
+        120000, // a sleeping free-tier instance can take a minute to wake
+      );
+      ws.once('open', () => {
+        clearTimeout(timer);
+        ws.send(JSON.stringify({ type: 'hello', sampleRate: 24000 }));
+        resolve();
+      });
+      ws.once('error', (e) => {
+        clearTimeout(timer);
+        reject(e);
+      });
+      ws.on('message', (d) => onServer(JSON.parse(d.toString()) as ServerMessage));
+    });
+  }
+  send(m: ClientMessage) {
+    if (this.ws.readyState === WebSocket.OPEN) this.ws.send(JSON.stringify(m));
+  }
+  stop() {
+    this.ws.close();
+  }
+  history() {
+    return null; // not observable across the wire, by design
+  }
+  async rtt(samples = 15): Promise<number> {
+    const xs: number[] = [];
+    for (let i = 0; i < samples; i++) {
+      const t0 = process.hrtime.bigint();
+      await new Promise<void>((res) => {
+        this.ws.ping();
+        this.ws.once('pong', () => res());
+      });
+      xs.push(Number(process.hrtime.bigint() - t0) / 1e6);
+      await new Promise((r) => setTimeout(r, 60));
+    }
+    xs.sort((a, b) => a - b);
+    return xs[Math.floor(xs.length / 2)];
+  }
+}
 
 const SAMPLE_RATE = Number(process.env.RIME_SAMPLING_RATE || 24000);
 
@@ -39,7 +136,7 @@ export type RunResult = {
 };
 
 export class Harness {
-  session: VoiceSession;
+  private transport: Transport;
   private samplesPlayed = 0;
   private liveTurn = 0;
   private stopped = false;
@@ -53,12 +150,16 @@ export class Harness {
   private bargeAtSamples: number | null = null;
   private onBargeReady: (() => void) | null = null;
 
-  constructor() {
-    this.session = new VoiceSession((m) => this.onServer(m));
+  constructor(remoteUrl?: string) {
+    this.transport = remoteUrl ? new RemoteTransport(remoteUrl) : new LocalTransport();
+  }
+
+  get kind() {
+    return this.transport.kind;
   }
 
   async start() {
-    await this.session.start();
+    await this.transport.start((m) => this.onServer(m));
     // The microphone is open for the whole session and never gated on whether
     // the agent is speaking. This timer is the proof of that, and its counts
     // are what AT-5 asserts on.
@@ -76,11 +177,11 @@ export class Harness {
   stop() {
     if (this.micTimer) clearInterval(this.micTimer);
     if (this.drainTimer) clearTimeout(this.drainTimer);
-    this.session.dispose();
+    this.transport.stop();
   }
 
   private send(m: ClientMessage) {
-    this.session.handle(m);
+    this.transport.send(m);
   }
 
   private onServer(m: ServerMessage) {
@@ -254,8 +355,13 @@ export class Harness {
     return p;
   }
 
-  get history() {
-    return this.session.traceHistory;
+  get history(): unknown[] | null {
+    return this.transport.history();
+  }
+
+  /** Median network round trip, or null for the in-process transport. */
+  measureRtt(samples = 15): Promise<number | null> {
+    return this.transport.rtt(samples);
   }
 }
 
