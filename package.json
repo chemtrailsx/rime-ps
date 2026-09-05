@@ -1,0 +1,33 @@
+{
+  "name": "bay-six",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Voice-native copilot for a working auto-repair bay. Rime coda is the primary spoken output.",
+  "scripts": {
+    "dev": "tsx watch --clear-screen=false server/index.ts",
+    "build": "next build",
+    "start": "cross-env NODE_ENV=production tsx server/index.ts",
+    "preflight": "tsx scripts/preflight.ts",
+    "evidence": "tsx scripts/evidence.ts",
+    "evidence:live": "cross-env BAY6_EVIDENCE_LIVE=1 tsx scripts/evidence.ts",
+    "pronounce": "tsx scripts/pronounce.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.124.0",
+    "cross-env": "^7.0.3",
+    "next": "15.5.4",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "ws": "^8.18.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@types/ws": "^8.5.13",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  }
+}

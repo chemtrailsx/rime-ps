@@ -1,0 +1,16 @@
+{
+  "_comment": "Synthetic torque specs. A misheard torque spec is a safety defect, which is why delivery accuracy is a first-class claim in this project.",
+  "specs": [
+    { "fastener": "oil drain plug",        "vehicle": "2019 Civic 1.5T", "nm": 39,  "ftlb": 29, "note": "replace crush washer" },
+    { "fastener": "wheel lug nut",         "vehicle": "2019 Civic 1.5T", "nm": 108, "ftlb": 80, "note": "star pattern, two stages" },
+    { "fastener": "spark plug",            "vehicle": "2019 Civic 1.5T", "nm": 18,  "ftlb": 13, "note": "cold engine only" },
+    { "fastener": "water pump bolt",       "vehicle": "2019 Civic 1.5T", "nm": 12,  "ftlb": 9,  "note": "criss-cross, do not overtighten" },
+    { "fastener": "caliper bracket bolt",  "vehicle": "2019 Civic 1.5T", "nm": 110, "ftlb": 81, "note": "new bolts required" },
+    { "fastener": "oil filter housing",    "vehicle": "2019 Civic 1.5T", "nm": 25,  "ftlb": 18, "note": "" }
+  ],
+  "fluids": [
+    { "system": "engine oil", "vehicle": "2019 Civic 1.5T", "grade": "0W-20", "capacityL": 3.7 },
+    { "system": "engine oil", "vehicle": "2016 Accord 2.4", "grade": "5W-30", "capacityL": 4.4 },
+    { "system": "coolant",    "vehicle": "2019 Civic 1.5T", "grade": "Type 2 blue", "capacityL": 5.3 }
+  ]
+}

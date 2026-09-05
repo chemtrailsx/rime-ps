@@ -1,0 +1,17 @@
+{
+  "_comment": "Representative shop vocabulary. Each case is rendered twice by scripts/pronounce.ts -- once raw, once through server/ear.ts -- with the Rime model, speaker and language held constant. The clips are the before/after evidence for the delivery claim.",
+  "cases": [
+    { "id": "sku-radiator",  "text": "Radiator cap, part number RC-1147-B.",                  "listenFor": "the digits must group as eleven forty-seven, not one one four seven" },
+    { "id": "sku-waterpump", "text": "Water pump assembly, part number WP-40312-A.",           "listenFor": "five-digit run must not be read as forty thousand three hundred twelve" },
+    { "id": "sku-alt",       "text": "The alternate is RC-1147-C, not RC-1147-B.",             "listenFor": "the two must be distinguishable on one hearing" },
+    { "id": "torque-drain",  "text": "Oil drain plug, 39 Nm. That is 29 ft-lb.",               "listenFor": "unit must be said in full, never as N-M" },
+    { "id": "torque-lug",    "text": "Wheel lug nut, 108 Nm, star pattern, two stages.",       "listenFor": "one hundred eight, not one zero eight" },
+    { "id": "torque-caliper","text": "Caliper bracket bolt, 110 Nm. New bolts required.",      "listenFor": "safety-critical: must be unambiguous" },
+    { "id": "oil-0w20",      "text": "Engine oil, 0W-20, 3.7L.",                               "listenFor": "grade must be zero W twenty, capacity three point seven litres" },
+    { "id": "oil-5w30",      "text": "Engine oil, 5W-30, 4.4L.",                               "listenFor": "must not render as five watt thirty" },
+    { "id": "bin",           "text": "Six on the shelf in bin A14.",                           "listenFor": "A fourteen, not A one four" },
+    { "id": "engine-code",   "text": "That fits the 2019 Civic 1.5T.",                         "listenFor": "one point five turbo, not one point five tee" },
+    { "id": "pressure",      "text": "Radiator cap, 1.1 bar.",                                 "listenFor": "one point one bar" },
+    { "id": "mixed",         "text": "SP-9RY-C spark plug, 18 Nm, cold engine only.",          "listenFor": "mixed alphanumeric group plus a torque value in one sentence" }
+  ]
+}

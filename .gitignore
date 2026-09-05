@@ -1,0 +1,10 @@
+node_modules/
+.next/
+.env
+.env.local
+*.log
+evidence/clips/*.wav
+evidence/runs/*.json
+!evidence/.gitkeep
+catalog.cache.json
+tsconfig.tsbuildinfo

@@ -1,0 +1,140 @@
+{
+  "startedAt": "2026-09-05T20:56:49.571Z",
+  "finishedAt": "2026-09-05T20:56:49.574Z",
+  "n": 20,
+  "node": "v22.15.0",
+  "platform": "win32",
+  "rime": {
+    "provider": "rime",
+    "modelId": "coda",
+    "speaker": "astra",
+    "lang": "en",
+    "audioFormat": "pcm",
+    "samplingRate": 24000,
+    "segment": "immediate",
+    "endpoint": "wss://users-ws.rime.ai/ws3",
+    "transport": "websocket-json (ws3), persistent, server-side proxied",
+    "keyPresent": false
+  },
+  "planner": "scripted (deterministic)",
+  "acceptance": {
+    "AT1_STOP_P95_MS": 150,
+    "AT2_FENCED_AUDIO_CHUNKS": 0,
+    "AT3_STALE_TOOL_RESULTS_SPOKEN": 0,
+    "AT4_HEARD_PREFIX_VIOLATIONS": 0,
+    "AT5_MIN_MIC_FRAMES": 1,
+    "AT6_UNCHANGED_IDENTIFIERS": 0
+  },
+  "results": {
+    "AT-6": {
+      "pass": true,
+      "measured": "12/12 fixtures rewritten; 0 raw identifiers survived",
+      "detail": {
+        "rows": [
+          {
+            "before": "Radiator cap, part number RC-1147-B.",
+            "after": "Radiator cap, part number R C, eleven forty-seven, B.",
+            "rulesFired": [
+              "sku"
+            ],
+            "stillRaw": false
+          },
+          {
+            "before": "Water pump assembly, part number WP-40312-A.",
+            "after": "Water pump assembly, part number W P, four, oh three, twelve, A.",
+            "rulesFired": [
+              "sku"
+            ],
+            "stillRaw": false
+          },
+          {
+            "before": "The alternate is RC-1147-C, not RC-1147-B.",
+            "after": "The alternate is R C, eleven forty-seven, C, not R C, eleven forty-seven, B.",
+            "rulesFired": [
+              "sku"
+            ],
+            "stillRaw": false
+          },
+          {
+            "before": "Oil drain plug, 39 Nm. That is 29 ft-lb.",
+            "after": "Oil drain plug, thirty-nine newton metres. That is twenty-nine foot pounds.",
+            "rulesFired": [
+              "torque-nm",
+              "torque-ftlb"
+            ],
+            "stillRaw": false
+          },
+          {
+            "before": "Wheel lug nut, 108 Nm, star pattern, two stages.",
+            "after": "Wheel lug nut, one hundred eight newton metres, star pattern, two stages.",
+            "rulesFired": [
+              "torque-nm"
+            ],
+            "stillRaw": false
+          },
+          {
+            "before": "Caliper bracket bolt, 110 Nm. New bolts required.",
+            "after": "Caliper bracket bolt, one hundred ten newton metres. New bolts required.",
+            "rulesFired": [
+              "torque-nm"
+            ],
+            "stillRaw": false
+          },
+          {
+            "before": "Engine oil, 0W-20, 3.7L.",
+            "after": "Engine oil, zero W twenty, three point seven litres.",
+            "rulesFired": [
+              "oil-grade",
+              "litres"
+            ],
+            "stillRaw": false
+          },
+          {
+            "before": "Engine oil, 5W-30, 4.4L.",
+            "after": "Engine oil, five W thirty, four point four litres.",
+            "rulesFired": [
+              "oil-grade",
+              "litres"
+            ],
+            "stillRaw": false
+          },
+          {
+            "before": "Six on the shelf in bin A14.",
+            "after": "Six on the shelf in bin A fourteen.",
+            "rulesFired": [
+              "bin"
+            ],
+            "stillRaw": false
+          },
+          {
+            "before": "That fits the 2019 Civic 1.5T.",
+            "after": "That fits the twenty nineteen Civic one point five turbo.",
+            "rulesFired": [
+              "model-year",
+              "engine-code"
+            ],
+            "stillRaw": false
+          },
+          {
+            "before": "Radiator cap, 1.1 bar.",
+            "after": "Radiator cap, one point one bar.",
+            "rulesFired": [
+              "bar-pressure"
+            ],
+            "stillRaw": false
+          },
+          {
+            "before": "SP-9RY-C spark plug, 18 Nm, cold engine only.",
+            "after": "S P, nine R Y, C spark plug, eighteen newton metres, cold engine only.",
+            "rulesFired": [
+              "sku-mixed",
+              "torque-nm"
+            ],
+            "stillRaw": false
+          }
+        ]
+      },
+      "claim": "every identifier, torque value and fluid grade is rewritten for the ear before synthesis"
+    }
+  }
+}

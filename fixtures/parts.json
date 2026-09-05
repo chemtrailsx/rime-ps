@@ -1,0 +1,12 @@
+{
+  "_comment": "Synthetic parts catalog. No real supplier data. Part numbers are shaped like real ones because their PRONUNCIATION is the point.",
+  "parts": [
+    { "sku": "RC-1147-B",  "name": "radiator cap, 1.1 bar",        "vehicles": ["2018 Civic 1.5T", "2019 Civic 1.5T"], "bin": "A14", "onHand": 6,  "priceUsd": 12.4 },
+    { "sku": "RC-1147-C",  "name": "radiator cap, 1.3 bar",        "vehicles": ["2019 Civic 1.5T", "2020 Civic 1.5T"], "bin": "A14", "onHand": 0,  "priceUsd": 13.1 },
+    { "sku": "OF-2291",    "name": "oil filter, cartridge",        "vehicles": ["2018 Civic 1.5T", "2019 Civic 1.5T"], "bin": "C02", "onHand": 24, "priceUsd": 8.75 },
+    { "sku": "WP-40312-A", "name": "water pump assembly",          "vehicles": ["2019 Civic 1.5T"],                    "bin": "F31", "onHand": 2,  "priceUsd": 189.0 },
+    { "sku": "SP-9RY-C",   "name": "spark plug, iridium",          "vehicles": ["2018 Civic 1.5T", "2019 Civic 1.5T"], "bin": "B07", "onHand": 41, "priceUsd": 14.2 },
+    { "sku": "TB-55120",   "name": "timing belt kit",              "vehicles": ["2016 Accord 2.4"],                    "bin": "G12", "onHand": 1,  "priceUsd": 241.5 },
+    { "sku": "BP-7734-F",  "name": "brake pad set, front, ceramic","vehicles": ["2019 Civic 1.5T", "2020 Civic 1.5T"], "bin": "D19", "onHand": 9,  "priceUsd": 61.0 }
+  ]
+}
