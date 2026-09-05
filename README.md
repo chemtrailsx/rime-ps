@@ -187,9 +187,12 @@ rather than a count — and that count is the evidence for what was heard.
 Anything that runs a persistent container works. A [`Dockerfile`](Dockerfile)
 and a Render blueprint ([`render.yaml`](render.yaml)) are included.
 
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/chemtrailsx/rime-ps)
+
 **Render** (free tier, WebSockets supported):
 
-1. Dashboard → **New** → **Blueprint** → point at this repository.
+1. Click the button above, or: dashboard → **New** → **Blueprint** → point at
+   this repository.
 2. Set `RIME_API_KEY` in the dashboard. It is marked `sync: false` in
    `render.yaml`, so it is never committed. `ANTHROPIC_API_KEY` is optional.
 3. Deploy. Everything else in `render.yaml` mirrors `.env.example`, so the
