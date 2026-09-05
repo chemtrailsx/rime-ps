@@ -173,6 +173,48 @@ rather than a count — and that count is the evidence for what was heard.
 
 ---
 
+## Deploying
+
+> **Bay Six cannot run on a serverless host, Vercel included.** This is not a
+> configuration problem, it is the architecture. Three things need a
+> long-lived process: the server owns its own HTTP listener so it can accept a
+> WebSocket upgrade at `/ws/voice`; the Rime `ws3` socket is opened once and
+> held warm for the whole session (a per-turn handshake would land on
+> time-to-first-audio); and `operation: clear` has to reach a socket that is
+> still open. Rebuilding this to fit serverless would mean deleting the
+> mechanism the project exists to demonstrate.
+
+Anything that runs a persistent container works. A [`Dockerfile`](Dockerfile)
+and a Render blueprint ([`render.yaml`](render.yaml)) are included.
+
+**Render** (free tier, WebSockets supported):
+
+1. Dashboard → **New** → **Blueprint** → point at this repository.
+2. Set `RIME_API_KEY` in the dashboard. It is marked `sync: false` in
+   `render.yaml`, so it is never committed. `ANTHROPIC_API_KEY` is optional.
+3. Deploy. Everything else in `render.yaml` mirrors `.env.example`, so the
+   deployed configuration and the tested configuration cannot drift.
+
+**Anywhere else** — Railway, Fly.io, a VPS, any container host:
+
+```bash
+docker build -t bay-six .
+docker run -p 3000:3000 -e RIME_API_KEY=... bay-six
+```
+
+Two things to know before you demo from a deployed URL:
+
+- **HTTPS is required.** `getUserMedia` and the Web Speech API only run on a
+  secure origin (`localhost` is exempt, a bare IP is not). Without TLS the mic
+  never opens and barge-in is dead — the app will still start on typed turns
+  and say so in the log, but that is not the demo.
+- **Free tiers sleep.** Render's free plan spins down when idle and cold-starts
+  in roughly a minute. Load the page once before recording. The cold start is
+  a hosting artifact and is not what the `cold` column in the trace table
+  measures — that flag tracks the Rime socket only.
+
+---
+
 ## Third-party services
 
 | service | role | required |

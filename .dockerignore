@@ -1,0 +1,8 @@
+node_modules
+.next
+.git
+evidence/runs
+evidence/clips
+*.log
+.env
+.env.local

@@ -1,0 +1,49 @@
+# Render blueprint. Render runs a persistent container and proxies WebSockets,
+# which is what Bay Six needs -- see the note in README under Deploying.
+#
+# Deploy: Render dashboard -> New -> Blueprint -> point at this repo.
+# Then set RIME_API_KEY in the dashboard (it is marked sync:false so it is
+# never committed).
+services:
+  - type: web
+    name: bay-six
+    runtime: node
+    plan: free
+    region: oregon
+    buildCommand: npm ci && npm run build
+    startCommand: npm start
+    healthCheckPath: /
+    envVars:
+      # Secrets: set these in the Render dashboard, never in this file.
+      - key: RIME_API_KEY
+        sync: false
+      - key: ANTHROPIC_API_KEY
+        sync: false
+
+      # The shipped Rime configuration. Identical to .env.example so that the
+      # deployed path and the tested path cannot drift.
+      - key: RIME_MODEL_ID
+        value: coda
+      - key: RIME_SPEAKER
+        value: astra
+      - key: RIME_LANG
+        value: en
+      - key: RIME_AUDIO_FORMAT
+        value: pcm
+      - key: RIME_SAMPLING_RATE
+        value: "24000"
+      - key: RIME_SEGMENT
+        value: immediate
+      - key: RIME_WS_URL
+        value: wss://users-ws.rime.ai/ws3
+      - key: RIME_HTTP_URL
+        value: https://users.rime.ai/v1/rime-tts
+      - key: RIME_CATALOG_URL
+        value: https://users.rime.ai/data/voices/all-v2.json
+
+      - key: ANTHROPIC_MODEL
+        value: claude-opus-5
+      - key: BAY6_TOOL_DELAY_MS
+        value: "3000"
+      - key: NODE_VERSION
+        value: "22"
